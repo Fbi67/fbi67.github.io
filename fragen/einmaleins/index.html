@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title title></title>
+    <link rel="stylesheet" href="../../css/material.min.css">
+    <script src="../../js/material.min.js"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+</head>
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("[title]").forEach(function (e) {
+            e.innerText = 'Fabian356';
+        })
+    })
+</script>
+
+<body>
+
+    <div class="demo-layout-transparent mdl-layout mdl-js-layout">
+        <header class="mdl-layout__header mdl-layout__header--transparent">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title" title>Malaufgaben-Quiz</span>
+                <div class="mdl-layout-spacer"></div>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href='../../'>Startseite</a>
+                </nav>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title" title>Malaufgaben-Quiz</span>
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" href='../../'>Startseite</a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content">
+            <div class="home white">
+                <div class="Zeit">
+                    <div class="Z1">Zeit:&nbsp;</div>
+                    <div class="Z2" id="Zeit">00:00</div>
+                </div>
+                <p class="grossi" id="frage"></p>
+                <div class="flexwrap form">
+                    <!-- Numeric Textfield -->
+
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" autocomplete="off" type="text" pattern="-?[0-9]*(\.[0-9]+)?"
+                            id="antwort">
+                        <label class="mdl-textfield__label" for="antwort">Reihe...</label>
+                        <span class="mdl-textfield__error">Input is not a number!</span>
+                    </div>
+
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="button"
+                        id="pruefen">
+                        Prüfen
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dialog-Klasse mit Callback-Funktion nach dem Schließen
+        class Dialog {
+            dialog;
+            closeButton;
+            onCloseCallback;
+
+            constructor(content, title) {
+                this.dialog = document.createElement('div');
+                this.dialog.className = 'dialog';
+                this.dialog.style.display = 'none';
+                this.dialog.innerHTML = `
+                    <div class="container">
+                        <div class="content">
+                            <h2>${title}</h2>
+                            <p>${content}</p>
+                        </div>
+                    </div>`;
+                document.body.appendChild(this.dialog);
+
+                this.addCloseButton('Schließen');
+                this.addEnterKeyHandler();
+            }
+
+            addCloseButton(textContent) {
+                this.closeButton = document.createElement('button');
+                this.closeButton.className = 'close mdl-button mdl-js-button mdl-js-ripple-effect';
+                this.closeButton.textContent = textContent;
+                this.closeButton.addEventListener('click', this.close.bind(this));
+                this.dialog.querySelector('.content').appendChild(this.closeButton);
+            }
+
+            addEnterKeyHandler() {
+                document.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter' && this.dialog.style.display === 'block') {
+                        this.close(); // Schließt den Dialog
+                    }
+                });
+            }
+
+            setOnCloseCallback(callback) {
+                this.onCloseCallback = callback; // Setzt die Rückruffunktion
+            }
+
+            close() {
+                if (document.body.contains(this.dialog)) {
+                    document.body.removeChild(this.dialog);
+                }
+                if (this.onCloseCallback) {
+                    this.onCloseCallback(); // Führt den Callback aus, wenn vorhanden
+                }
+            }
+
+            open() {
+                this.dialog.style.display = 'flex';
+                this.closeButton.focus();
+            }
+        }
+        var runden = 0;
+        var Richtig = 0;
+        var Falsch = 0;
+        // Funktion, um eine neue Frage zu stellen
+        function FrageStellen() {
+            if (runden == 10) {
+                window.document.location.href = './Ergebniss.html?Richtig=' + Richtig + '&Falsch=' + Falsch + '&Zeit=' + document.getElementById('Zeit').textContent;
+            }
+            var zahl1 = Math.floor(Math.random() * 10) + 1;
+            var zahl2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('frage').innerText = `Was ist ${zahl1} x ${zahl2}?`;
+            document.getElementById('antwort').focus();
+            return [zahl1, zahl2];
+        }
+
+        var zahlen = FrageStellen();
+
+        // Funktion zur Prüfung der Antwort
+        function fragePruefen(zahl1, zahl2) {
+            var antwort = parseFloat(document.getElementById('antwort').value);
+            var korrekt = zahl1 * zahl2;
+            runden++;
+            if (isNaN(antwort)) {
+                var dialog = new Dialog("Bitte geben Sie eine gültige Zahl ein.", "Ungültige Eingabe");
+                dialog.setOnCloseCallback(() => {
+                    zahlen = FrageStellen();
+                });
+                Falsch++;
+                dialog.open();
+                return false;
+            }
+
+            if (antwort === korrekt) {
+                var dialog = new Dialog("Richtig!", "Glückwunsch");
+                dialog.setOnCloseCallback(() => {
+                    zahlen = FrageStellen();
+                });
+                Richtig++;
+                dialog.open();
+                return true;
+            } else {
+                Falsch++;
+                var dialog = new Dialog(`Falsch! Die richtige Antwort ist ${korrekt}.`, "Leider falsch");
+                dialog.setOnCloseCallback(() => {
+                    zahlen = FrageStellen();
+                });
+                dialog.open();
+                return false;
+            }
+        }
+
+        // Event-Handler zum Prüfen der Antwort
+        document.getElementById('pruefen').addEventListener('click', function () {
+            fragePruefen(zahlen[0], zahlen[1]);
+            document.getElementById('antwort').value = ""; // Zurücksetzen des Eingabefelds
+        });
+
+        // Enter-Taste zum Prüfen verwenden
+        document.getElementById('antwort').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                document.getElementById('pruefen').click(); // Klickt auf den "Prüfen"-Button
+            }
+        });
+        //Stopuhr
+
+        let timer;
+        let isRunning = false;
+        let seconds = 0;
+        let minutes = 0;
+
+        function startTimer() {
+            if (!isRunning) {
+                timer = setInterval(updateTimer, 1000);
+            }
+            isRunning = !isRunning;
+        }
+
+        function updateTimer() {
+            seconds++;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+            }
+            document.getElementById('Zeit').textContent =
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+        }
+
+        window.addEventListener("load", startTimer);
+    </script>
+</body>
+
+</html>
