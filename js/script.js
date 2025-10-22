@@ -92,9 +92,9 @@ function FrageStellen() {
         var rando = random(10, 0);
         a = random(GET("Reihe2"), 0);
         if (rando > 5) {
-            document.getElementById("Anzeige").innerHTML = `Was gibt ${GET("Reihe")}<img alt="*" src="../../assets/mal.png"/>${a}?`;
+            document.getElementById("Anzeige").innerHTML = `Was gibt ${GET("reihe")}<img alt="*" src="../../assets/mal.png"/>${a}?`;
         } else {
-            document.getElementById("Anzeige").innerHTML = `Was gibt ${a}<img alt="*" src="../../assets/mal.png"/>${GET("Reihe2")}?`;
+            document.getElementById("Anzeige").innerHTML = `Was gibt ${a}<img alt="*" src="../../assets/mal.png"/>${GET("reihe")}?`;
         }
     }
 }
