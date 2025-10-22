@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/material.min.css">
     <script src="../js/material.min.js"></script>
     <script src="../js/script.js" type="module"></script>
-    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <script>
@@ -41,27 +41,27 @@
                 <div class="mdl-layout-spacer"></div>
                 <!-- Navigation -->
                 <nav class="mdl-navigation">
-                    <a class="mdl-navigation__link" href="../">Startseite</a>
+                    <a class="mdl-navigation__link" href='../'>Startseite</a>
                 </nav>
             </div>
         </header>
         <div class="mdl-layout__drawer">
             <span class="mdl-layout-title">Fabian356</span>
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" href="../">Startseite</a>
+                <a class="mdl-navigation__link" href='../'>Startseite</a>
             </nav>
         </div>
         <main class="mdl-layout__content">
             <div class="home white">
                 <p id="Aufforderung" class="grossi">Bitte Reihe eingeben</p>
-                <form action="../fragen/einmaleins/" class="flexwrap">
+                <form action="../fragen/einmaleins/" class="flexwrap" method="get">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" name="reihe" pattern="-?[0-9]*(\.[0-9]+)?" id="Feld">
                         <label class="mdl-textfield__label" for="Feld">Reihe...</label>
                         <span class="mdl-textfield__error">Input is not a number!</span>
                     </div>
                     <img alt="*" src="../assets/mal.png" class="icon"/>
-                    <select name="Reihe2" title="Zweite Reihe" id="reihe2">
+                    <select name="reihe2" title="Zweite Reihe" id="reihe2">
                         <option value="5">5</option>
                         <option value="10" selected>10</option>
                         <option value="10">15</option>

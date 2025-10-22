@@ -1,4 +1,8 @@
 .body {
+    height: 70px;
+    display: flex;
+    align-items: center;
+
     .prozent {
         border-radius: 15px;
         border: lightblue solid 3px;
@@ -42,7 +46,7 @@
         display: flex;
         margin: 2px;
         width: 160px;
-        height: 35px;
+        height: 30px;
         justify-content: center;
         align-items: center;
     }

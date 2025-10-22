@@ -1,78 +1,72 @@
-/*
-Type * Was
-GET  * reihe
-GET  * Reihe2
-ID   * Antwort
-ID   * Anzeige
-*/
+// Dialog-Klasse mit Callback-Funktion nach dem Schließen
+class Dialog {
+  dialog;
+  closeButton;
+  onCloseCallback;
 
-// Funktion, um das Ergebnis anzuzeigen
-function Ergebniss() {
-  alert("Miau");
-  console.log("Ergebniss anzeigen");
-}
+  constructor(content, title) {
+    this.dialog = document.createElement("div");
+    this.dialog.className = "dialog";
+    this.dialog.style.display = "none";
+    this.dialog.innerHTML = `
+                      <div class="container">
+                          <div class="content">
+                              <h2>${title}</h2>
+                              <p>${content}</p>
+                          </div>
+                      </div>`;
+    document.body.appendChild(this.dialog);
 
-let a;
-
-// Klasse Dialog
-
-// Event-Listener für die Enter-Taste beim Eingabefeld hinzufügen
-document.getElementById("Antwort").addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    Kontrolle();
+    this.addCloseButton("Schließen");
+    this.addEnterKeyHandler();
   }
-  event.preventDefault();
-});
 
-function Kontrolle() {
-  var Antwort = document.getElementById("Antwort").value;
-  if (Antwort == parseInt(GET("Reihe")) * parseInt(GET("Reihe2"))) {
-    var Falsch = new Dialog("Richtig", "Richtig", {
-      bg: "#00ff00",
-      color: "#FFFFFF",
-    });
-    Falsch.addCloseButton("Schließen");
-    Falsch.open();
-  } else {
-    var Falsch = new Dialog(`Das ist nicht ${GET("Reihe")}.`, "Fehler", {
-      bg: "#ff0000",
-      color: "#FFFFFF",
-    });
-    Falsch.addCloseButton("Schließen");
-    Falsch.open();
+  addCloseButton(textContent) {
+    this.closeButton = document.createElement("button");
+    this.closeButton.className =
+      "close mdl-button mdl-js-button mdl-js-ripple-effect";
+    this.closeButton.textContent = textContent;
+    this.closeButton.addEventListener("click", this.close.bind(this));
+    this.dialog.querySelector(".content").appendChild(this.closeButton);
   }
-}
 
-// Globale Variable für die Anzahl der Runden
-let rounds = 0;
+  addEnterKeyHandler() {
+    document.addEventListener("keypress", (event) => {
+      if (event.key === "Enter" && this.dialog.style.display === "block") {
+        this.close(); // Schließt den Dialog
+      }
+    });
+  }
 
-// Funktion, um eine neue Frage zu stellen
-function FrageStellen() {
-  rounds++;
-  if (rounds >= 10) {
-    Ergebniss(); // Nach 10 Runden das Ergebnis anzeigen
-  } else {
-    document.getElementById("Antwort").value = "";
-    document.getElementById("Antwort").focus();
-    var rando = random(10, 0);
-    a = random(GET("Reihe2"), 0);
-    if (rando > 5) {
-      document.getElementById("Anzeige").innerHTML = `Was gibt ${GET(
-        "reihe"
-      )}<img alt="*" src="../../assets/mal.png"/>${a}?`;
-    } else {
-      document.getElementById(
-        "Anzeige"
-      ).innerHTML = `Was gibt ${a}<img alt="*" src="../../assets/mal.png"/>${GET(
-        "reihe"
-      )}?`;
+  setOnCloseCallback(callback) {
+    this.onCloseCallback = callback; // Setzt die Rückruffunktion
+  }
+
+  close() {
+    if (document.body.contains(this.dialog)) {
+      document.body.removeChild(this.dialog);
+    }
+    if (this.onCloseCallback) {
+      this.onCloseCallback(); // Führt den Callback aus, wenn vorhanden
     }
   }
+
+  open() {
+    this.dialog.style.display = "flex";
+    this.closeButton.focus();
+  }
 }
 
-// Starten des Fragestellungsprozesses
-FrageStellen();
-
-/*function random(max, min) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}*/
+function GET(Variablenname) {
+  var Info = window.location.search.substring(1, window.location.search.length);
+  var SuchListe = Info.split("&");
+  for (var i = 0; i < SuchListe.length; i++) {
+    var Index = SuchListe[i].indexOf("=");
+    var Eigenschaft = SuchListe[i].substring(0, Index);
+    var Wert = SuchListe[i].substring(Index + 1, SuchListe[i].length);
+    if (Eigenschaft == Variablenname) {
+      return unescape(Wert);
+    }
+  }
+  return null;
+}
